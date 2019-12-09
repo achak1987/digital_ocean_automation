@@ -8,7 +8,7 @@
 ###########################################################################################
 
 # Digital ocean API access token
-do_oauth_token: 
+do_oauth_token: c3dc93d0a9bb296f1f28f60144f7e46b082ac9a85327c18e38b4e96cf3813a43
 # curl -X GET -silent "https://api.digitalocean.com/v2/account/keys" -H "Authorization: Bearer <<token>>" # to retrive the key
 # Will list all the ssh key pub keys, ids, fingerprint and other relevent information. 
 # Execute it on your terminal to retrive the required ssk_keys ids that would be able to ssh onto the droplets

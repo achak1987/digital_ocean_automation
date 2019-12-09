@@ -22,6 +22,27 @@ There are very few parameters to be configured currently. All configurations are
 ## Configurations for Host Machines 
 For each of the projects (fabric-as-code or mysome_glusterfs) we need to select one of the following *configutation* and run the playbooks defined in the *Creaing Droplets on DO*  section bellow
 
+### for **mysome_glusterfs** [https://github.com/achak1987/mysome_glusterfs]
+- Please navigate to the file `inventory/hosts_template`
+- fill this file with the following structure:
+```
+[gfscluster]
+
+
+
+```
+- In order the specify the host machines, you need to populate this file `inventory/hosts_template` with the names of the host that you want to create. Each line/row in the file would represent a host machine. The root/first line `[gfscluster]` gives a name to the cluster for internal reference in the project and **must not be changed**. Please fill each line in the format: 
+
+`hostname ansible_python_interpreter="/path/to/python"`
+  - `hostname`: can be any name. Must be unique for each machine. The project will internally refer to the machines with this name
+  - `ansible_python_interpreter`: In order for ansible to work, we need python 2.7.x or above available on each remote machine. Here we specify the **path of python on the remote machine** so that our local ansible project know where to find python on these machines.
+- The following *example* defines 3 machines (gfs[1-3]) as remote hosts
+```
+[gfscluster]
+gfs1 ansible_python_interpreter="/usr/bin/python3"
+gfs2 ansible_python_interpreter="/usr/bin/python3"
+gfs3 ansible_python_interpreter="/usr/bin/python3"
+```
 ### for **fabric-as-code** [https://github.com/achak1987/fabric_as_code]
 - Please navigate to the file `inventory/hosts_template`
 - fill this file with the following structure:
@@ -69,29 +90,6 @@ hlf3 ansible_python_interpreter="/usr/bin/python3"
 hlf4 ansible_python_interpreter="/usr/bin/python3"
 ```
 
-### for **mysome_glusterfs** [https://github.com/achak1987/mysome_glusterfs]
-- Please navigate to the file `inventory/hosts_template`
-- fill this file with the following structure:
-```
-[gfscluster]
-
-
-
-```
-- In order the specify the host machines, you need to populate this file `inventory/hosts_template` with the names of the host that you want to create. Each line/row in the file would represent a host machine. The root/first line `[gfscluster]` gives a name to the cluster for internal reference in the project and **must not be changed**. Please fill each line in the format: 
-
-`hostname ansible_python_interpreter="/path/to/python"`
-  - `hostname`: can be any name. Must be unique for each machine. The project will internally refer to the machines with this name
-  - `ansible_python_interpreter`: In order for ansible to work, we need python 2.7.x or above available on each remote machine. Here we specify the **path of python on the remote machine** so that our local ansible project know where to find python on these machines.
-- The following *example* defines 3 machines (gfs[1-3]) as remote hosts
-```
-[gfscluster]
-gfs1 ansible_python_interpreter="/usr/bin/python3"
-gfs2 ansible_python_interpreter="/usr/bin/python3"
-gfs3 ansible_python_interpreter="/usr/bin/python3"
-```
-
-
 ## Creaing Droplets on DO
 
 - Next we would run the following playbooks to create
@@ -105,3 +103,16 @@ gfs3 ansible_python_interpreter="/usr/bin/python3"
   - Creates the specified number of host machines on digital ocean.
 
 - Copy hosts file to `inventory/hosts` for the respective project
+
+## Removing Droplets on DO
+- `inventory/hosts` file should be present
+- The created `hostname` should listed in the hosts file
+- example:
+```
+[gfscluster]
+gfs0 ansible_host=167.71.42.51 ansible_python_interpreter=/usr/bin/python3
+gfs1 ansible_host=165.22.203.52 ansible_python_interpreter=/usr/bin/python3
+```
+- Playbook: `001.despawn_droplets.yml`
+    - Execute: `ansible-playbook -v 001.despawn_droplets.yml`
+    - Removes the droplets in Digital Ocean as defined in `inventory/hosts` file
